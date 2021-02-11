@@ -18,14 +18,6 @@ namespace AddressBookDay13
         public string email;
         public string addressBook;
 
-        public ContactDetails(string firstName, string lastName)
-        {
-            this.firstName = firstName;
-            this.lastName = lastName;
-        }
-
-       
-
         public ContactDetails(string addressBook, string firstName, string lastName, string address, string city, string state, int zip, long phoneNumber, string email)
         {
             this.firstName = firstName;
