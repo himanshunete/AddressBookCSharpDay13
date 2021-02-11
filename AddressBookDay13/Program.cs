@@ -24,9 +24,7 @@ namespace AddressBookDay13
             this.lastName = lastName;
         }
 
-        public ContactDetails(string firstName, string lastName, string address, string city, string state, int zip, long phoneNumber, string email) : this(firstName, lastName)
-        {
-        }
+       
 
         public ContactDetails(string addressBook, string firstName, string lastName, string address, string city, string state, int zip, long phoneNumber, string email)
         {
@@ -263,6 +261,7 @@ namespace AddressBookDay13
             string addressBook = Console.ReadLine();
             sportBook.AddressBook(addressBook);
             sportBook.ComputeDetails();
+
             sportBook.Search();
             sportBook.Count();
 
