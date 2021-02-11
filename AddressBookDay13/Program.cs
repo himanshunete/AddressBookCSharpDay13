@@ -31,10 +31,9 @@ namespace AddressBookDay13
             this.phoneNumber2 = phoneNumber2;
             this.email = email;
             this.addressBook = addressBook;
-
-
-
         }
+
+    
 
         public string toString()
         {
@@ -50,7 +49,7 @@ namespace AddressBookDay13
     //Computation
     class Program
     {
-        private List<ContactDetails> contactDetailsList;
+        public List<ContactDetails> contactDetailsList;
         private Dictionary<string, ContactDetails> contactDetailsMap;
     //  private List<List<ContactDetails>> multipleAddressBookList;
         private Dictionary<string, Dictionary<string, ContactDetails>> multipleAddressBookMap;
@@ -67,13 +66,13 @@ namespace AddressBookDay13
         public void AddDetails(string addressBook, string firstName, string LastName, string address, string city, string state, int zip, int phoneNumber1, int phoneNumber2, string email)
         {
             ContactDetails contactDetails = new ContactDetails(addressBook, firstName, LastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
-            var result = contactDetailsList.Where(x => x.firstName == firstName);
             //No Duplicate Entries
-            if (result == null)
+            if (contactDetailsMap.ContainsKey(firstName) == false)
             {
                 contactDetailsList.Add(contactDetails);
                 contactDetailsMap.Add(firstName, contactDetails);
-            }  
+            }
+
 
         }
 
@@ -97,6 +96,24 @@ namespace AddressBookDay13
             int index = Convert.ToInt32(Console.ReadLine());
             contactDetailsList.RemoveAt(index);
             contactDetailsMap.Remove(firstName);
+        }
+
+        public void Search()
+        {
+            Console.WriteLine(" Enter city ");
+            string city = Console.ReadLine();
+            var result = contactDetailsList.FindAll(x => x.city == city);
+            Console.WriteLine(" Find Person ");
+            string firstName = Console.ReadLine();
+            var person = result.Where(x => x.firstName == firstName).FirstOrDefault();
+            if (person != null)
+            {
+                Console.WriteLine( firstName +" is  in " + city);
+            }
+            else
+            {
+                Console.WriteLine(firstName + " is not  in " + city);
+            }
         }
 
         
@@ -163,13 +180,14 @@ namespace AddressBookDay13
             Program businessBook = new Program();
 
             //AddressBook1
-            sportBook.AddDetails( "Sports", "Virat", " Kohli ", " ldikr lyout ", " Mumbai ", " Maharashtra ", 440024, 88059, 56103, " kohli@gmail.com ");
-            sportBook.AddDetails("Sports", " MS ", " Dhoni ", " Gulmohr Chowk ", " Ranchi ", " Jharkhand ", 440011, 88011, 56102, " dhoni@gmail.com ");
-            sportBook.AddDetails("Sports", "KL ", " Rahul ", " Parker Bay ", " Banglore ", " Karnataka ", 440017, 88060, 11103, " rahul@gmail.com ");
+            sportBook.AddDetails( "Sports", "Virat", " Kohli ", " ldikr lyout ", "Mumbai", " Maharashtra ", 440024, 88059, 56103, " kohli@gmail.com ");
+            sportBook.AddDetails("Sports", "MS", " Dhoni ", " Gulmohr Chowk ", "Mumbai", " Jharkhand ", 440011, 88011, 56102, " dhoni@gmail.com ");
+            sportBook.AddDetails("Sports", "KL", " Rahul ", " Parker Bay ", " Banglore ", " Karnataka ", 440017, 88060, 11103, " rahul@gmail.com ");
             Console.WriteLine(" Enter Book1: ");
             string addressBook = Console.ReadLine();
             sportBook.AddressBook(addressBook);
             sportBook.ComputeDetails();
+            sportBook.Search();
 
             //AddressBook2
             businessBook.MultipleAddressBook();
