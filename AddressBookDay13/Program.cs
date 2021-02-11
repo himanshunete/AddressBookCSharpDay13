@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AddressBookDay13
 {
-    class ContactDetails
+    public class ContactDetails
     {
         public string firstName;
         public string lastName;
@@ -13,13 +14,21 @@ namespace AddressBookDay13
         public string city;
         public string state;
         public int zip;
-        public int phoneNumber1;
-        public int phoneNumber2;
+        public long phoneNumber;
         public string email;
         public string addressBook;
-      
 
-        public ContactDetails(string addressBook, string firstName, string lastName, string address, string city, string state, int zip, int phoneNumber1, int phoneNumber2, string email)
+        public ContactDetails(string firstName, string lastName)
+        {
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+
+        public ContactDetails(string firstName, string lastName, string address, string city, string state, int zip, long phoneNumber, string email) : this(firstName, lastName)
+        {
+        }
+
+        public ContactDetails(string addressBook, string firstName, string lastName, string address, string city, string state, int zip, long phoneNumber, string email)
         {
             this.firstName = firstName;
             this.lastName = lastName;
@@ -27,8 +36,7 @@ namespace AddressBookDay13
             this.city = city;
             this.state = state;
             this.zip = zip;
-            this.phoneNumber1 = phoneNumber1;
-            this.phoneNumber2 = phoneNumber2;
+            this.phoneNumber = phoneNumber;
             this.email = email;
             this.addressBook = addressBook;
         }
@@ -40,38 +48,43 @@ namespace AddressBookDay13
             return  "Address Book: " +addressBook+ "\n"
                                    +""   +" Details of " + firstName + " " + lastName + " are: " + " Address: " + address + "  City: " + city + "\n"
                                     + "                               " + " State: " + state + "  Zip: " + zip + "\n"
-                                    + "                               " + " PhoneNumber: " + phoneNumber1 + phoneNumber2 + "\n"
+                                    + "                               " + " PhoneNumber: " + phoneNumber + "\n"
                                     + "                               "  + " Email: " + email;
 
         }
     }
 
     //Computation
-    class Program
+    public class Program
     {
-        public List<ContactDetails> contactDetailsList;
+        Validation validation = new Validation();
+        private List<ContactDetails> contactDetailsList;
         private Dictionary<string, ContactDetails> contactDetailsMap;
-    //  private List<List<ContactDetails>> multipleAddressBookList;
+        //  private List<List<ContactDetails>> multipleAddressBookList;
         private Dictionary<string, Dictionary<string, ContactDetails>> multipleAddressBookMap;
 
         public Program()
         {
             contactDetailsList = new List<ContactDetails>();
             contactDetailsMap = new Dictionary<string, ContactDetails>();
-    //      multipleAddressBookList = new List<List<ContactDetails>>();
+            //      multipleAddressBookList = new List<List<ContactDetails>>();
             multipleAddressBookMap = new Dictionary<string, Dictionary<string, ContactDetails>>();
+            
         }
 
         // Add detail logic in Book using collection
-        public void AddDetails(string addressBook, string firstName, string LastName, string address, string city, string state, int zip, int phoneNumber1, int phoneNumber2, string email)
+        public List<ContactDetails> AddDetails(string addressBook, string firstName, string LastName, string address, string city, string state, int zip, long phoneNumber, string email)
         {
-            ContactDetails contactDetails = new ContactDetails(addressBook, firstName, LastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
+            ContactDetails contactDetails = new ContactDetails(addressBook, firstName, LastName, address, city, state, zip, phoneNumber, email);
             //No Duplicate Entries
             if (contactDetailsMap.ContainsKey(firstName) == false)
             {
                 contactDetailsList.Add(contactDetails);
                 contactDetailsMap.Add(firstName, contactDetails);
             }
+
+            return contactDetailsList;
+
         }
 
         // Create Nested Dictionary
@@ -79,11 +92,11 @@ namespace AddressBookDay13
         {
             multipleAddressBookMap.Add(addressBook, contactDetailsMap);
         }
-       
+
         // update the elements given in the list
-        public void EditDetails(string addressBook, string firstName, string LastName, string address, string city, string state, int zip, int phoneNumber1, int phoneNumber2, String email)
+        public void EditDetails(string addressBook, string firstName, string LastName, string address, string city, string state, int zip, long phoneNumber, String email)
         {
-            ContactDetails contactDetails = new ContactDetails(addressBook, firstName, LastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
+            ContactDetails contactDetails = new ContactDetails(addressBook, firstName, LastName, address, city, state, zip, phoneNumber, email);
             Console.WriteLine(" Select index: ");
             int index = Convert.ToInt32(Console.ReadLine());
             contactDetailsList[index] = contactDetails;
@@ -100,7 +113,7 @@ namespace AddressBookDay13
         }
 
         //Searching a Person
-        public void Search()
+        private Dictionary<string, ContactDetails> Search()
         {
             Console.WriteLine(" Enter state ");
             string state = Console.ReadLine();
@@ -113,18 +126,17 @@ namespace AddressBookDay13
             var person = cityCheck.Where(x => x.firstName == firstName).FirstOrDefault();
             if (person != null)
             {
-                Console.WriteLine( firstName +" is  in " + city);
+                Console.WriteLine(firstName + " is  in " + city);
             }
             else
             {
                 Console.WriteLine(firstName + " is not  in " + city);
             }
-
             Dictionary<string, ContactDetails> detailCity = new Dictionary<string, ContactDetails>();
             Dictionary<string, ContactDetails> detailState = new Dictionary<string, ContactDetails>();
             detailCity.Add(city, person);
             detailState.Add(state, person);
-            foreach(KeyValuePair<string, ContactDetails> i in detailCity)
+            foreach (KeyValuePair<string, ContactDetails> i in detailCity)
             {
                 Console.WriteLine("City: {0}  {1}", i.Key, i.Value.toString());
             }
@@ -134,7 +146,18 @@ namespace AddressBookDay13
                 Console.WriteLine("State: {0}  {1}", i.Key, i.Value.toString());
             }
 
+            Console.WriteLine(detailCity.Count());
+            return detailCity;
         }
+
+        public void Count()
+        {
+            Console.WriteLine(" Enter state ");
+            string state = Console.ReadLine();
+            var stateCheck = contactDetailsList.FindAll(x => x.state == state);
+            Console.WriteLine(" No of contacts from the state: " + state + " are "+ stateCheck.Count);
+        }
+
 
         //User Input for adding the details in a book
         public void UserInputDetails()
@@ -146,15 +169,23 @@ namespace AddressBookDay13
             {
                 string addressBook = Console.ReadLine();
                 string firstName = Console.ReadLine();
+                validation.FirstName(firstName);                       //Validation 
                 string lastName = Console.ReadLine();
+                validation.LastName(lastName);                         //Validation
                 string address = Console.ReadLine();
+                validation.Address(address);                           //Validation
                 string city = Console.ReadLine();
                 string state = Console.ReadLine();
                 int zip = Convert.ToInt32(Console.ReadLine());
-                int phoneNumber1 = Convert.ToInt32(Console.ReadLine());
-                int phoneNumber2 = Convert.ToInt32(Console.ReadLine());
+                string zipString = zip.ToString();                     
+                validation.Zip(zipString);                             //Validation
+                long phoneNumber = Convert.ToInt32(Console.ReadLine());
+                string phoneNumberString = phoneNumber.ToString();      
+                validation.MobileNumber(phoneNumberString);            //Validation
                 string email = Console.ReadLine();
-                AddDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
+                validation.EmailAddress(email);                        //Validation
+                AddDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber, email);
+               
             }
         }
 
@@ -174,10 +205,9 @@ namespace AddressBookDay13
                 string city = Console.ReadLine();
                 string state = Console.ReadLine();
                 int zip = Convert.ToInt32(Console.ReadLine());
-                int phoneNumber1 = Convert.ToInt32(Console.ReadLine());
-                int phoneNumber2 = Convert.ToInt32(Console.ReadLine());
+                long phoneNumber = Convert.ToInt32(Console.ReadLine());
                 string email = Console.ReadLine();
-                EditDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
+                EditDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber, email);
             }
         }
 
@@ -219,21 +249,23 @@ namespace AddressBookDay13
 
         static void Main(string[] args)
         {
+
             Console.WriteLine(" Welcome to Address Book System ");
             Program sportBook = new Program();
             Program businessBook = new Program();
 
             //AddressBook1
-            sportBook.AddDetails( "Sports", "Virat", " Kohli ", " ldikr lyout ", "Mumbai", "Maharashtra", 440024, 88059, 56103, " kohli@gmail.com ");
-            sportBook.AddDetails("Sports", "MS", " Dhoni ", " Gulmohr Chowk ", "Pune", "Maharashtra", 440011, 88011, 56102, " dhoni@gmail.com ");
-            sportBook.AddDetails("Sports", "KL", " Rahul ", " Parker Bay ", "Banglore", "Karnataka", 440017, 88060, 11103, " rahul@gmail.com ");
-            sportBook.AddDetails("Sports", "Sachin", " Tendulkar ", " Parker Bay ", "Mumbai", "Maharashtra", 440017, 88060, 11103, " rahul@gmail.com ");
-            sportBook.AddDetails("Sports", "Ajinkya", " Rahane ", " Parker Bay ", "Mumbai", "Maharashtra", 440017, 88060, 11103, " rahul@gmail.com ");
+            sportBook.AddDetails( "Sports", "Virat", " Kohli ", " ldikr lyout ", "Mumbai", "Maharashtra", 440024, 8805956103, " kohli@gmail.com ");
+            sportBook.AddDetails("Sports", "MS", " Dhoni ", " Gulmohr Chowk ", "Pune", "Maharashtra", 440011, 8801156102, " dhoni@gmail.com ");
+            sportBook.AddDetails("Sports", "KL", " Rahul ", " Parker Bay ", "Banglore", "Karnataka", 440017, 8806011103, " rahul@gmail.com ");
+            sportBook.AddDetails("Sports", "Sachin", " Tendulkar ", " Parker Bay ", "Mumbai", "Maharashtra", 440017, 8806011103, " rahul@gmail.com ");
+            sportBook.AddDetails("Sports", "Ajinkya", " Rahane ", " Parker Bay ", "Mumbai", "Maharashtra", 440017, 8806011103, " rahul@gmail.com ");
             Console.WriteLine(" Enter Book1: ");
             string addressBook = Console.ReadLine();
             sportBook.AddressBook(addressBook);
             sportBook.ComputeDetails();
             sportBook.Search();
+            sportBook.Count();
 
             //AddressBook2
             businessBook.UserInputDetails();
