@@ -62,7 +62,7 @@ namespace AddressBookDay13
             multipleAddressBookMap = new Dictionary<string, Dictionary<string, ContactDetails>>();
         }
 
-
+        // Add detail logic in Book using collection
         public void AddDetails(string addressBook, string firstName, string LastName, string address, string city, string state, int zip, int phoneNumber1, int phoneNumber2, string email)
         {
             ContactDetails contactDetails = new ContactDetails(addressBook, firstName, LastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
@@ -72,40 +72,45 @@ namespace AddressBookDay13
                 contactDetailsList.Add(contactDetails);
                 contactDetailsMap.Add(firstName, contactDetails);
             }
-
-
         }
 
+        // Create Nested Dictionary
         public void AddressBook(string addressBook)
         {
             multipleAddressBookMap.Add(addressBook, contactDetailsMap);
         }
        
-
+        // update the elements given in the list
         public void EditDetails(string addressBook, string firstName, string LastName, string address, string city, string state, int zip, int phoneNumber1, int phoneNumber2, String email)
         {
             ContactDetails contactDetails = new ContactDetails(addressBook, firstName, LastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
-
+            Console.WriteLine(" Select index: ");
             int index = Convert.ToInt32(Console.ReadLine());
             contactDetailsList[index] = contactDetails;
             contactDetailsMap[firstName] = contactDetails;
         }
 
+        // delete the detail 
         public void DeleteDetails(string firstName)
         {
+            Console.WriteLine("Enter index");
             int index = Convert.ToInt32(Console.ReadLine());
             contactDetailsList.RemoveAt(index);
             contactDetailsMap.Remove(firstName);
         }
 
+        //Searching a Person
         public void Search()
         {
+            Console.WriteLine(" Enter state ");
+            string state = Console.ReadLine();
+            var stateCheck = contactDetailsList.FindAll(x => x.state == state);
             Console.WriteLine(" Enter city ");
             string city = Console.ReadLine();
-            var result = contactDetailsList.FindAll(x => x.city == city);
+            var cityCheck = stateCheck.FindAll(x => x.city == city);
             Console.WriteLine(" Find Person ");
             string firstName = Console.ReadLine();
-            var person = result.Where(x => x.firstName == firstName).FirstOrDefault();
+            var person = cityCheck.Where(x => x.firstName == firstName).FirstOrDefault();
             if (person != null)
             {
                 Console.WriteLine( firstName +" is  in " + city);
@@ -114,10 +119,25 @@ namespace AddressBookDay13
             {
                 Console.WriteLine(firstName + " is not  in " + city);
             }
+
+            Dictionary<string, ContactDetails> detailCity = new Dictionary<string, ContactDetails>();
+            Dictionary<string, ContactDetails> detailState = new Dictionary<string, ContactDetails>();
+            detailCity.Add(city, person);
+            detailState.Add(state, person);
+            foreach(KeyValuePair<string, ContactDetails> i in detailCity)
+            {
+                Console.WriteLine("City: {0}  {1}", i.Key, i.Value.toString());
+            }
+
+            foreach (KeyValuePair<string, ContactDetails> i in detailState)
+            {
+                Console.WriteLine("State: {0}  {1}", i.Key, i.Value.toString());
+            }
+
         }
 
-        
-        public void MultipleAddressBook()
+        //User Input for adding the details in a book
+        public void UserInputDetails()
         {
             Console.WriteLine(" Total number of persons we wanna add : ");
             int noOfPersons = Convert.ToInt32(Console.ReadLine());
@@ -136,8 +156,32 @@ namespace AddressBookDay13
                 string email = Console.ReadLine();
                 AddDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
             }
-
         }
+
+        //User input for editing the details for a book
+        public void UserInputEditDetails()
+        {
+            Console.WriteLine(" No. of Edits: ");
+            int noOfEdits = Convert.ToInt32(Console.ReadLine());
+            for (int i = 0; i < noOfEdits; i++)
+            {
+                Console.WriteLine(" Enter details");
+//              var result = contactDetailsList.Select(x => x.city.Replace()).ToList();
+                string addressBook = Console.ReadLine();
+                string firstName = Console.ReadLine();
+                string lastName = Console.ReadLine();
+                string address = Console.ReadLine();
+                string city = Console.ReadLine();
+                string state = Console.ReadLine();
+                int zip = Convert.ToInt32(Console.ReadLine());
+                int phoneNumber1 = Convert.ToInt32(Console.ReadLine());
+                int phoneNumber2 = Convert.ToInt32(Console.ReadLine());
+                string email = Console.ReadLine();
+                EditDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
+            }
+        }
+
+        //Display the information
         public void ComputeDetails()
         {
             // foreach (KeyValuePair<string, Dictionary<string, ContactDetails>> book in multipleAddressBookMap)
@@ -162,7 +206,7 @@ namespace AddressBookDay13
             //       Console.WriteLine(multipleAddressBookList[i1]);
             //   }
             //     
-
+            Console.WriteLine("**********************************");
             Console.WriteLine(" Dictionary of Address Book ");
                foreach (var k in multipleAddressBookMap)
                {
@@ -180,9 +224,11 @@ namespace AddressBookDay13
             Program businessBook = new Program();
 
             //AddressBook1
-            sportBook.AddDetails( "Sports", "Virat", " Kohli ", " ldikr lyout ", "Mumbai", " Maharashtra ", 440024, 88059, 56103, " kohli@gmail.com ");
-            sportBook.AddDetails("Sports", "MS", " Dhoni ", " Gulmohr Chowk ", "Mumbai", " Jharkhand ", 440011, 88011, 56102, " dhoni@gmail.com ");
-            sportBook.AddDetails("Sports", "KL", " Rahul ", " Parker Bay ", " Banglore ", " Karnataka ", 440017, 88060, 11103, " rahul@gmail.com ");
+            sportBook.AddDetails( "Sports", "Virat", " Kohli ", " ldikr lyout ", "Mumbai", "Maharashtra", 440024, 88059, 56103, " kohli@gmail.com ");
+            sportBook.AddDetails("Sports", "MS", " Dhoni ", " Gulmohr Chowk ", "Pune", "Maharashtra", 440011, 88011, 56102, " dhoni@gmail.com ");
+            sportBook.AddDetails("Sports", "KL", " Rahul ", " Parker Bay ", "Banglore", "Karnataka", 440017, 88060, 11103, " rahul@gmail.com ");
+            sportBook.AddDetails("Sports", "Sachin", " Tendulkar ", " Parker Bay ", "Mumbai", "Maharashtra", 440017, 88060, 11103, " rahul@gmail.com ");
+            sportBook.AddDetails("Sports", "Ajinkya", " Rahane ", " Parker Bay ", "Mumbai", "Maharashtra", 440017, 88060, 11103, " rahul@gmail.com ");
             Console.WriteLine(" Enter Book1: ");
             string addressBook = Console.ReadLine();
             sportBook.AddressBook(addressBook);
@@ -190,11 +236,12 @@ namespace AddressBookDay13
             sportBook.Search();
 
             //AddressBook2
-            businessBook.MultipleAddressBook();
+            businessBook.UserInputDetails();
             Console.WriteLine(" Enter Book2: ");
             addressBook = Console.ReadLine();
             businessBook.AddressBook(addressBook);
             businessBook.ComputeDetails();
+            businessBook.Search();
 
             //Manipulation
             Console.WriteLine(" Wanna manipulate or not ? YES or NO ");
@@ -208,21 +255,7 @@ namespace AddressBookDay13
                 switch (option)
                 {
                     case EDIT:
-                        int noOfEdits = Convert.ToInt32(Console.ReadLine());
-                        for (int numOfPerson = 1; numOfPerson < noOfEdits; numOfPerson++)
-                        {
-                            addressBook = Console.ReadLine();
-                            string firstName = Console.ReadLine();
-                            string lastName = Console.ReadLine();
-                            string address = Console.ReadLine();
-                            string city = Console.ReadLine();
-                            string state = Console.ReadLine();
-                            int zip = Convert.ToInt32(Console.ReadLine());
-                            int phoneNumber1 = Convert.ToInt32(Console.ReadLine());
-                            int phoneNumber2 = Convert.ToInt32(Console.ReadLine());
-                            string email = Console.ReadLine();
-                            sportBook.EditDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
-                        }
+                        sportBook.UserInputEditDetails();
                         sportBook.ComputeDetails();
                         break;
                     case DELETE:
