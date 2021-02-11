@@ -162,6 +162,7 @@ namespace AddressBookDay13
             Program sportBook = new Program();
             Program businessBook = new Program();
 
+            //AddressBook1
             sportBook.AddDetails( "Sports", "Virat", " Kohli ", " ldikr lyout ", " Mumbai ", " Maharashtra ", 440024, 88059, 56103, " kohli@gmail.com ");
             sportBook.AddDetails("Sports", " MS ", " Dhoni ", " Gulmohr Chowk ", " Ranchi ", " Jharkhand ", 440011, 88011, 56102, " dhoni@gmail.com ");
             sportBook.AddDetails("Sports", "KL ", " Rahul ", " Parker Bay ", " Banglore ", " Karnataka ", 440017, 88060, 11103, " rahul@gmail.com ");
@@ -170,47 +171,52 @@ namespace AddressBookDay13
             sportBook.AddressBook(addressBook);
             sportBook.ComputeDetails();
 
-
+            //AddressBook2
             businessBook.MultipleAddressBook();
             Console.WriteLine(" Enter Book2: ");
             addressBook = Console.ReadLine();
             businessBook.AddressBook(addressBook);
             businessBook.ComputeDetails();
 
-
-            Console.WriteLine(" Edit or Delete options: Enter EDIT:0 & DELETE:1 ");
-            int option = Convert.ToInt32(Console.ReadLine());
-            const int EDIT = 0;
-            const int DELETE = 1;
-            switch (option)
+            //Manipulation
+            Console.WriteLine(" Wanna manipulate or not ? YES or NO ");
+            string answer = Console.ReadLine();
+            if ("YES" == answer)
             {
-                case EDIT:
-                    int noOfEdits = Convert.ToInt32(Console.ReadLine());
-                    for (int numOfPerson = 1; numOfPerson < noOfEdits; numOfPerson++)
-                    {
-                        addressBook = Console.ReadLine();
-                        string firstName = Console.ReadLine();
-                        string lastName = Console.ReadLine();
-                        string address = Console.ReadLine();
-                        string city = Console.ReadLine();
-                        string state = Console.ReadLine();
-                        int zip = Convert.ToInt32(Console.ReadLine());
-                        int phoneNumber1 = Convert.ToInt32(Console.ReadLine());
-                        int phoneNumber2 = Convert.ToInt32(Console.ReadLine());
-                        string email = Console.ReadLine();
-                        sportBook.EditDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
-                    }
-                    sportBook.ComputeDetails();
-                    break;
-                case DELETE:
-                    int noOfDeletes = Convert.ToInt32(Console.ReadLine());
-                    for (int numOfPerson = 1; numOfPerson < noOfDeletes; numOfPerson++)
-                    {
-                        string firstName = Console.ReadLine();
-                        sportBook.DeleteDetails(firstName);
-                    }
-                    sportBook.ComputeDetails();
-                    break;
+                Console.WriteLine(" Edit or Delete options: Enter EDIT:0 & DELETE:1 ");
+                int option = Convert.ToInt32(Console.ReadLine());
+                const int EDIT = 0;
+                const int DELETE = 1;
+                switch (option)
+                {
+                    case EDIT:
+                        int noOfEdits = Convert.ToInt32(Console.ReadLine());
+                        for (int numOfPerson = 1; numOfPerson < noOfEdits; numOfPerson++)
+                        {
+                            addressBook = Console.ReadLine();
+                            string firstName = Console.ReadLine();
+                            string lastName = Console.ReadLine();
+                            string address = Console.ReadLine();
+                            string city = Console.ReadLine();
+                            string state = Console.ReadLine();
+                            int zip = Convert.ToInt32(Console.ReadLine());
+                            int phoneNumber1 = Convert.ToInt32(Console.ReadLine());
+                            int phoneNumber2 = Convert.ToInt32(Console.ReadLine());
+                            string email = Console.ReadLine();
+                            sportBook.EditDetails(addressBook, firstName, lastName, address, city, state, zip, phoneNumber1, phoneNumber2, email);
+                        }
+                        sportBook.ComputeDetails();
+                        break;
+                    case DELETE:
+                        int noOfDeletes = Convert.ToInt32(Console.ReadLine());
+                        for (int numOfPerson = 1; numOfPerson < noOfDeletes; numOfPerson++)
+                        {
+                            string firstName = Console.ReadLine();
+                            sportBook.DeleteDetails(firstName);
+                        }
+                        sportBook.ComputeDetails();
+                        break;
+                }
             }
 
 
